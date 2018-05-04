@@ -4,21 +4,19 @@ import java.util.*;
 import java.lang.reflect.Array;
 
 /**
- * Projeto AED do grupo nº ??  [preencher]
- *  
- * @author numero aluno + nome 
- * @author numero aluno + nome 
- * @author numero aluno + nome
- *  
+ * Projeto AED do grupo  aed69
+ *
+ * @author numero 47871 Ricardo Cruz
+ * @author numero 48597 Joao Costa
+ * @author numero ----- ----------
+ *
  */
 public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
-	private T data;
+	private T prev, data;
+	private int size;
+	private int capacity;
 	private ArrayNTree<T>[] children;     // exemplo do array a usar
-	
-	// podem incluir outros atributos
-	
-	/////////////////////////////////////
 
 	/**
 	 * Creates an empty tree 
@@ -27,8 +25,9 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	@SuppressWarnings("unchecked")
 	public ArrayNTree(int capacity) {
 		// TODO
-		
-        // exemplo de como se constroi o array de arvores
+		// exemplo de como se constroi o array de arvores
+		this.data = null;
+		this.capacity = capacity;
 		this.children  = (ArrayNTree<T>[])Array.newInstance(ArrayNTree.class, capacity);
 	}
 
@@ -38,22 +37,49 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	 * @param capacity The capacity of each node, ie, the maximum number of direct successors
 	 */
 	public ArrayNTree(T elem, int capacity) {
+		this.data = elem;
+		this.capacity = capacity;
+		this.children = new ArrayNTree[capacity];
+		size++;
 		// TODO
 	}
 
 	/**
 	 * Creates a tree with the elements inside the given list
-	 * @param elem     The list with all the elements to insert
+	 * @param list     The list with all the elements to insert
 	 * @param capacity The capacity of each node, ie, the maximum number of direct successors
+	 * @return The tree with elements inside
 	 */
 	public ArrayNTree(List<T> list, int capacity) {
+		int count = 0;
+		T aux;
+		ArrayNTree<T> newArrayNTree;
+		while(count < list.size()){
+			if(count == 0)
+				newArrayNTree = new ArrayNTree<T>(list.get(0),capacity);
+			else {
+
+				//se o elemento na lista for menor que o data, entao tem de se trocar de posicao
+				if (list.get(count).compareTo(newArrayNTree.data) == 1) {
+					aux = newArrayNTree.data;
+					newArrayNTree.data = list.get(count);
+
+					for (int i = 0; i < newArrayNTree.children.length; i++) {
+						if (newArrayNTree.children[i] == null)
+							newArrayNTree.children[i].data = aux;
+						//incompleto
+					}
+				}
+				size++;
+			}
+		}
 		// TODO
 	}
 
 	/////////////////////////////////////
 
 	public boolean isEmpty() {
-		return false;  // TODO
+		return data==null;
 	}
 
 	/////////////////////////////////////
@@ -62,10 +88,8 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 		return false;  // TODO
 	}
 
-	/////////////////////////////////////
-
 	public int size() {
-		return -1;  // TODO
+		return size;
 	}
 
 	/////////////////////////////////////
@@ -78,9 +102,8 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	/////////////////////////////////////
 
 	public int height() {
-		return -1;  // TODO
+		return 0;
 	}
-
 	/////////////////////////////////////
 
 	public T min() {
@@ -96,7 +119,7 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	/////////////////////////////////////
 
 	public boolean contains(T elem) {
-		return false;  // TODO
+		//TODO
 	}
 
 	/////////////////////////////////////
@@ -119,25 +142,28 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object other) {
+		// comparar toList() do arrayNtree com o other.toList com um for each
+	/////////////////////////////////////
 		return false;  // TODO
 	}
-
-	/////////////////////////////////////
+	
 
 	public List<T> toList() {
+			// procura prefixa e colocar os elementos numa lista com o tamanho size
+	/////////////////////////////////////
 		return null;  // TODO
 	}
 
-	/////////////////////////////////////
 
 	/**
 	 * @returns a new tree with the same elements of this
 	 */
 	public ArrayNTree<T> clone() {
+		//percorrer a lista e vais colocar os elementos respeitando a regra de colocacao prefixa
+	/////////////////////////////////////
 		return null;  // TODO
 	}
-
-	/////////////////////////////////////
+	
 
 	public String toString() {
 		if (isEmpty())
@@ -153,7 +179,7 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 			if (brt!=null)
 				sb.append(brt.toString());
 
-		return sb.append("]").toString();				
+		return sb.append("]").toString();
 	}
 
 	// more detailed information about tree structure 
