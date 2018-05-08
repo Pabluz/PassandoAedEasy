@@ -1,7 +1,10 @@
 package main.java.datatype;
 
-import java.util.*;
 import java.lang.reflect.Array;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * Projeto AED do grupo  aed69
@@ -13,7 +16,7 @@ import java.lang.reflect.Array;
  */
 public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
-	private T prev, data;
+	private T prev, data, next;
 	private int size;
 	private int capacity;
 	private ArrayNTree<T>[] children;     // exemplo do array a usar
@@ -102,23 +105,39 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	/////////////////////////////////////
 
 	public int height() {
-		return 0;
-	}
+
+		return auxHeight(data);
+
+	}	
+
+	private int auxHeight( T root) {
+
+		if(root==null)
+			return  0;
+		return 1+ Math.max(auxHeight(root.left), auxHeight(root.right));	}
+
 	/////////////////////////////////////
 
 	public T min() {
-		return null;  // TODO
+
+
 	}
 
 	/////////////////////////////////////
 
 	public T max() {
-		return null;  // TODO
+
+		ArrayNTree<T> root=(ArrayNTree<T>) data;
+
+		while(root.next!=null)
+			return root.next;  // TODO
+		return data= root.next;
 	}
 
 	/////////////////////////////////////
 
 	public boolean contains(T elem) {
+		return false;
 		//TODO
 	}
 
@@ -138,33 +157,64 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
 	/**
 	 * Is this tree equal to another object?
+	 * 
 	 * Two NTrees are equal iff they have the same values
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object other) {
 		// comparar toList() do arrayNtree com o other.toList com um for each
-	/////////////////////////////////////
-		return false;  // TODO
+		/////////////////////////////////////
+		// se o objeto for o mesmo
+		if(this==other)
+			return true;
+		// Se nao forem do mesmo tipo
+		if(other==null||!(other instanceof ArrayNTree ))
+			return false; 
+
+		if(this.size()!=((NTree<T>) other).size())
+			return false;
+		/*
+		//verificar cada um dos elems
+		List primeiro= this.toList();
+		Iterator compare= (Iterator) other;
+		while(((Iterator) primeiro).hasNext())
+			if(!Objects.equals(((Iterator) primeiro).next(),compare.next())) 
+				return false; 
+
+		return true;
 	}
-	
+		 */
+		//ArrayNTree<T>[] children
+		for(ArrayNTree<T> e:children)
+			if(!e.toList().equals(((NTree<T>) other).toList()))
+				return false;
+		return true;
+	}
+
+
 
 	public List<T> toList() {
-			// procura prefixa e colocar os elementos numa lista com o tamanho size
-	/////////////////////////////////////
-		return null;  // TODO
-	}
 
+		// procura prefixa e colocar os elementos numa lista com o tamanho size
+		///////////////bnnnn//////////////////////''''
+
+		return toList();  // TODO
+	}
 
 	/**
 	 * @returns a new tree with the same elements of this
 	 */
-	public ArrayNTree<T> clone() {
-		//percorrer a lista e vais colocar os elementos respeitando a regra de colocacao prefixa
-	/////////////////////////////////////
-		return null;  // TODO
-	}
-	
+	public ArrayNTree<T>clone(){
 
+		ArrayNTree<T> clon= new ArrayNTree<T> (capacity);
+		for(ArrayNTree<T> e:children)
+			clon.insert((T) e);
+		return clon; 
+	}
+
+	/**
+	 * @returns 
+	 */
 	public String toString() {
 		if (isEmpty())
 			return "[]";
@@ -190,8 +240,26 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	/////////////////////////////////////
 
 	@Override
-	public Iterator<T> iterator() {
-		return null;  // TODO
-	}
+	public Iterator<T> iterator(){
 
+		return new Iterator<T>() {
+
+			private int count=0;
+
+			public boolean hasNext(){
+
+				return count < children.length;
+			}
+
+			public T next() throws NoSuchElementException {
+				if (!hasNext())
+					throw new NoSuchElementException();
+				return (T) children[count++];
+
+			}
+
+		};
+	}
 }
+
+
