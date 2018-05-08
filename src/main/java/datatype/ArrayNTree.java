@@ -1,10 +1,7 @@
 package main.java.datatype;
 
 import java.lang.reflect.Array;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Projeto AED do grupo  aed69
@@ -22,7 +19,7 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	private ArrayNTree<T>[] children;     // exemplo do array a usar
 
 	/**
-	 * Creates an empty tree 
+	 * Creates an empty tree
 	 * @param capacity The capacity of each node, ie, the maximum number of direct successors
 	 */
 	@SuppressWarnings("unchecked")
@@ -88,7 +85,7 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	/////////////////////////////////////
 
 	public boolean isLeaf() {
-		return false;  // TODO
+		return false; //TODO
 	}
 
 	public int size() {
@@ -106,39 +103,52 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
 	public int height() {
 
-		return auxHeight(data);
+		return auxHeight(data);//TODO
 
-	}	
+	}
 
 	private int auxHeight( T root) {
 
 		if(root==null)
 			return  0;
 		return 1+ Math.max(auxHeight(root.left), auxHeight(root.right));	}
-
+	//TODO
 	/////////////////////////////////////
 
 	public T min() {
-
-
+		return toList().get(0);
 	}
 
 	/////////////////////////////////////
 
 	public T max() {
 
-		ArrayNTree<T> root=(ArrayNTree<T>) data;
+		List<T> listElems = toList();
+		T max = listElems.get(0);
+		int count = 1;
 
-		while(root.next!=null)
-			return root.next;  // TODO
-		return data= root.next;
+		while(count < listElems.size()){
+
+			if(listElems.get(count).compareTo(max) == 1)
+				max = listElems.get(count);
+
+			count++;
+		}
 	}
 
 	/////////////////////////////////////
 
 	public boolean contains(T elem) {
-		return false;
-		//TODO
+
+		List <T> listElems = toList();
+		for(int i = 0; i<size(); i++){
+			if(listElems.get(i).equals(elem))
+				return true;
+			else{
+				if(listElems.get(i).compareTo(elem) == 1)
+					return false;
+			}
+		}
 	}
 
 	/////////////////////////////////////
@@ -157,63 +167,63 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
 	/**
 	 * Is this tree equal to another object?
-	 * 
+	 *
 	 * Two NTrees are equal iff they have the same values
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object other) {
-		// comparar toList() do arrayNtree com o other.toList com um for each
-		/////////////////////////////////////
+
 		// se o objeto for o mesmo
 		if(this==other)
 			return true;
+
 		// Se nao forem do mesmo tipo
-		if(other==null||!(other instanceof ArrayNTree ))
-			return false; 
-
-		if(this.size()!=((NTree<T>) other).size())
+		if(!(other instanceof ArrayNTree ))
 			return false;
-		/*
-		//verificar cada um dos elems
-		List primeiro= this.toList();
-		Iterator compare= (Iterator) other;
-		while(((Iterator) primeiro).hasNext())
-			if(!Objects.equals(((Iterator) primeiro).next(),compare.next())) 
-				return false; 
 
-		return true;
-	}
-		 */
-		//ArrayNTree<T>[] children
-		for(ArrayNTree<T> e:children)
-			if(!e.toList().equals(((NTree<T>) other).toList()))
+		if(this.size()!= ((NTree<T>) other).size())
+			return false;
+
+		List <T> original = this.toList();
+		List <T> otherList = ((ArrayNTree) other).toList();
+		int count = 0;
+
+		while(count< size()) {
+			if (original.get(count).equals(otherList.get(count)))
 				return false;
+			count++;
+		}
+
 		return true;
 	}
 
 
-
+	//ta feto
 	public List<T> toList() {
+		List<T> list = new ArrayList<T>();
+		Iterator<T> iterator = iterator();
 
-		// procura prefixa e colocar os elementos numa lista com o tamanho size
-		///////////////bnnnn//////////////////////''''
-
-		return toList();  // TODO
+		while(iterator.hasNext()){
+			list.add(iterator.next());
+		}
+		return list;
 	}
 
 	/**
 	 * @returns a new tree with the same elements of this
 	 */
 	public ArrayNTree<T>clone(){
-
-		ArrayNTree<T> clon= new ArrayNTree<T> (capacity);
-		for(ArrayNTree<T> e:children)
-			clon.insert((T) e);
-		return clon; 
+		//FIXME
+		List<T> list = toList();
+		ArrayNTree<T> clone = new ArrayNTree<T>(capacity);
+		for(int i = 0; i <list.size(); i++){
+			clone.insert(list.get(i));
+		}
+		return clone;
 	}
 
 	/**
-	 * @returns 
+	 * @returns
 	 */
 	public String toString() {
 		if (isEmpty())
@@ -232,7 +242,7 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 		return sb.append("]").toString();
 	}
 
-	// more detailed information about tree structure 
+	// more detailed information about tree structure
 	public String info() {
 		return this + ", size: " + size() + ", height: " + height() + ", nLeaves: " + countLeaves();
 	}
@@ -241,24 +251,23 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
 	@Override
 	public Iterator<T> iterator(){
+		return new IteratorNTree();
+	}
 
-		return new Iterator<T>() {
+	//FIXME
+	private class IteratorNTree implements Iterator{
+		private int position = 0;
 
-			private int count=0;
+		public boolean hasNext() {
+			return position < size() && data != null;
+		}
 
-			public boolean hasNext(){
+		public T next() {
+			if (this.hasNext())
+				return children[position++].data;
 
-				return count < children.length;
-			}
-
-			public T next() throws NoSuchElementException {
-				if (!hasNext())
-					throw new NoSuchElementException();
-				return (T) children[count++];
-
-			}
-
-		};
+			return null;
+		}
 	}
 }
 
