@@ -8,7 +8,6 @@ import java.util.*;
  *
  * @author numero 47871 Ricardo Cruz
  * @author numero 48597 Joao Costa
- * @author numero ----- ----------
  *
  */
 public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
@@ -16,7 +15,8 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	private T prev, data, next;
 	private int size;
 	private int capacity;
-	private ArrayNTree<T>[] children;     // exemplo do array a usar
+	private T [] child;
+	private ArrayNTree<T>[] children;     // exemplo do array a usar;
 
 	/**
 	 * Creates an empty tree
@@ -36,12 +36,12 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	 * @param elem     The element value
 	 * @param capacity The capacity of each node, ie, the maximum number of direct successors
 	 */
+	@SuppressWarnings("unchecked")
 	public ArrayNTree(T elem, int capacity) {
 		this.data = elem;
 		this.capacity = capacity;
-		this.children = new ArrayNTree[capacity];
+		this.children  = (ArrayNTree<T>[])Array.newInstance(ArrayNTree.class, capacity);
 		size++;
-		// TODO
 	}
 
 	/**
@@ -54,24 +54,7 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 		int count = 0;
 		T aux;
 		ArrayNTree<T> newArrayNTree;
-		while(count < list.size()){
-			if(count == 0)
-				newArrayNTree = new ArrayNTree<T>(list.get(0),capacity);
-			else {
-
-				//se o elemento na lista for menor que o data, entao tem de se trocar de posicao
-				if (list.get(count).compareTo(newArrayNTree.data) == 1) {
-					aux = newArrayNTree.data;
-					newArrayNTree.data = list.get(count);
-
-					for (int i = 0; i < newArrayNTree.children.length; i++) {
-						if (newArrayNTree.children[i] == null)
-							newArrayNTree.children[i].data = aux;
-						//incompleto
-					}
-				}
-				size++;
-			}
+		while(count < list.size()) {
 		}
 		// TODO
 	}
@@ -79,18 +62,37 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	/////////////////////////////////////
 
 	public boolean isEmpty() {
-		return data==null;
-	}
+		return data == null;
+	} //ta feto
 
 	/////////////////////////////////////
 
 	public boolean isLeaf() {
-		return false; //TODO
+		return data!=null && noChild(data); //TODO
 	}
 
+	private boolean noChild(T elem){
+		ArrayNTree<T> tree = findTree(elem);
+		if(tree == null){
+			return false;
+		}
+		return tree.isEmpty();
+	}
+
+	private ArrayNTree<T> findTree(T element){
+		int count = 0;
+
+		while(count < children.length){
+			if(children[count].data == element)
+				return children[count];
+			count++;
+		}
+
+		return null;
+	}
 	public int size() {
 		return size;
-	}
+	} // ta feto
 
 	/////////////////////////////////////
 
@@ -115,9 +117,7 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	//TODO
 	/////////////////////////////////////
 
-	public T min() {
-		return toList().get(0);
-	}
+	public T min() { return toList().get(0); } //ta feto
 
 	/////////////////////////////////////
 
@@ -129,12 +129,13 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
 		while(count < listElems.size()){
 
-			if(listElems.get(count).compareTo(max) == 1)
+			if(listElems.get(count).compareTo(max) > 0)
 				max = listElems.get(count);
 
 			count++;
 		}
-	}
+		return max;
+	} //ta feto
 
 	/////////////////////////////////////
 
@@ -145,18 +146,41 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 			if(listElems.get(i).equals(elem))
 				return true;
 			else{
-				if(listElems.get(i).compareTo(elem) == 1)
+				if(listElems.get(i).compareTo(elem) > 0)
 					return false;
 			}
 		}
-	}
+	}// ta feto
 
 	/////////////////////////////////////
 
 	public void insert(T elem) {
+
+		T aux;
+
+		if(isEmpty()){
+			data = elem;
+		}
+		else{
+			if(data.compareTo(elem) > 0){
+				aux = data;
+				data = elem;
+				insert(aux);
+			}
+			else{
+
+			}
+		}
 		// TODO
 	}
+	private int[] isFull(ArrayNTree<T> children){
 
+		int count = 0, index = 0;
+		while(count < children.capacity){
+			if(children.)
+			count++;
+		}
+	}
 	/////////////////////////////////////
 
 	public void delete(T elem) {
