@@ -15,7 +15,6 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	private T prev, data, next;
 	private int size;
 	private int capacity;
-	private T [] child;
 	private ArrayNTree<T>[] children;     // exemplo do array a usar;
 
 	/**
@@ -168,18 +167,35 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 				insert(aux);
 			}
 			else{
-
+				if(isFull){
+					
+				}
+				else{
+				}
 			}
 		}
 		// TODO
 	}
-	private int[] isFull(ArrayNTree<T> children){
+	private int[] freeSpaces(ArrayNTree<T> children, int index){
 
-		int count = 0, index = 0;
-		while(count < children.capacity){
-			if(children.)
-			count++;
+		index = 0;
+		int [] indexes = new int [capacity];
+		for(int i= 0; i < capacity; i++){
+			if(children[index][i] == null){
+				indexes[index] = i; 
+				index++;
+			}
 		}
+		return indexes;
+			
+	}
+				   
+	private boolean isFull(ArrayNTree<T> children) {
+		for(int i = 0; i < capacity; i++){
+			if(children[index][i] == null)
+				return false;
+		}
+		return true;
 	}
 	/////////////////////////////////////
 
