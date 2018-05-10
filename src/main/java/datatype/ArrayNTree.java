@@ -102,18 +102,20 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
 	/////////////////////////////////////
 
+	//TODO
 	public int height() {
 
-		return auxHeight(data);//TODO
+		return auxHeight(data);
 
 	}
 
+	//TODO
 	private int auxHeight( T root) {
 
 		if(root==null)
 			return  0;
 		return 1+ Math.max(auxHeight(root.left), auxHeight(root.right));	}
-	//TODO
+
 	/////////////////////////////////////
 
 	public T min() { return toList().get(0); } //ta feto
@@ -156,7 +158,13 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	public void insert(T elem) {
 
 		T aux;
+		int index = 0;
 
+		//se a arvore ja contiver o elemento ele nao insere
+		if(contains(elem))
+			return;
+
+		//se a arvore estiver vazia ele coloca o elemento no data
 		if(isEmpty()){
 			data = elem;
 		}
@@ -167,36 +175,55 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 				insert(aux);
 			}
 			else{
-				if(isFull){
-					
-				}
-				else{
+				while(index < children.length) {
+					//se nao ta cheio ele coloca no inicio
+					if(children[index].size()-1 < capacity) {
+						if (freeSpaces(index).size() == capacity) {
+							children[index].children[0].data = elem;
+							return;
+						}
+						//se nao tiver espaco livre passa para a proxima arvore
+						else if(freeSpaces(index).size() == 0)
+							index++;
+						//se tiver espaco livre mas nao der para colocar no inicio
+						else{
+
+						}
+
+					}
+
 				}
 			}
 		}
 		// TODO
 	}
-	private int[] freeSpaces(ArrayNTree<T> children, int index){
+	private T findBiggerElem(int index,int childIndex, T elem){
 
-		index = 0;
-		int [] indexes = new int [capacity];
-		for(int i= 0; i < capacity; i++){
-			if(children[index][i] == null){
-				indexes[index] = i; 
-				index++;
+		while(index < capacity){
+			if(elem.compareTo(children[index].children[childIndex].data) < 0){
+				return children[index].data;
+			}
+			index++;
+		}
+
+		return null;
+
+	}
+
+	private List<Integer> freeSpaces(int index){
+
+		List<Integer> arrayIndex = new ArrayList<>();
+		int local = 0;
+		for(int i = 0; i< capacity; i++){
+			if(children[index].children[i].data == null) {
+				arrayIndex.add(index);
+				local++;
 			}
 		}
-		return indexes;
-			
+
+		return arrayIndex;
 	}
-				   
-	private boolean isFull(ArrayNTree<T> children) {
-		for(int i = 0; i < capacity; i++){
-			if(children[index][i] == null)
-				return false;
-		}
-		return true;
-	}
+
 	/////////////////////////////////////
 
 	public void delete(T elem) {
@@ -243,9 +270,9 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 		List<T> list = new ArrayList<T>();
 		Iterator<T> iterator = iterator();
 
-		while(iterator.hasNext()){
+		while(iterator.hasNext())
 			list.add(iterator.next());
-		}
+
 		return list;
 	}
 
@@ -256,9 +283,9 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 		//FIXME
 		List<T> list = toList();
 		ArrayNTree<T> clone = new ArrayNTree<T>(capacity);
-		for(int i = 0; i <list.size(); i++){
+		for(int i = 0; i <list.size(); i++)
 			clone.insert(list.get(i));
-		}
+
 		return clone;
 	}
 
