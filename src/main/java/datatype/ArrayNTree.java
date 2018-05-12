@@ -19,6 +19,7 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
 	/**
 	 * Creates an empty tree
+	 *
 	 * @param capacity The capacity of each node, ie, the maximum number of direct successors
 	 */
 	@SuppressWarnings("unchecked")
@@ -27,11 +28,12 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 		// exemplo de como se constroi o array de arvores
 		this.data = null;
 		this.capacity = capacity;
-		this.children  = (ArrayNTree<T>[])Array.newInstance(ArrayNTree.class, capacity);
+		this.children = (ArrayNTree<T>[]) Array.newInstance(ArrayNTree.class, capacity);
 	}
 
 	/**
 	 * Create a tree with one element
+	 *
 	 * @param elem     The element value
 	 * @param capacity The capacity of each node, ie, the maximum number of direct successors
 	 */
@@ -39,12 +41,13 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	public ArrayNTree(T elem, int capacity) {
 		this.data = elem;
 		this.capacity = capacity;
-		this.children  = (ArrayNTree<T>[])Array.newInstance(ArrayNTree.class, capacity);
+		this.children = (ArrayNTree<T>[]) Array.newInstance(ArrayNTree.class, capacity);
 		size++;
 	}
 
 	/**
 	 * Creates a tree with the elements inside the given list
+	 *
 	 * @param list     The list with all the elements to insert
 	 * @param capacity The capacity of each node, ie, the maximum number of direct successors
 	 * @return The tree with elements inside
@@ -53,7 +56,7 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 		int count = 0;
 		T aux;
 		ArrayNTree<T> newArrayNTree;
-		while(count < list.size()) {
+		while (count < list.size()) {
 		}
 		// TODO
 	}
@@ -67,28 +70,29 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	/////////////////////////////////////
 
 	public boolean isLeaf() {
-		return data!=null && noChild(data); //TODO
+		return data != null && noChild(data); //TODO
 	}
 
-	private boolean noChild(T elem){
+	private boolean noChild(T elem) {
 		ArrayNTree<T> tree = findTree(elem);
-		if(tree == null){
+		if (tree == null) {
 			return false;
 		}
 		return tree.isEmpty();
 	}
 
-	private ArrayNTree<T> findTree(T element){
+	private ArrayNTree<T> findTree(T element) {
 		int count = 0;
 
-		while(count < children.length){
-			if(children[count].data == element)
+		while (count < children.length) {
+			if (children[count].data == element)
 				return children[count];
 			count++;
 		}
 
 		return null;
 	}
+
 	public int size() {
 		return size;
 	} // ta feto
@@ -110,11 +114,12 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	}
 
 	//TODO
-	private int auxHeight( T root) {
+	private int auxHeight(T root) {
 
-		if(root==null)
-			return  0;
-		return 1+ Math.max(auxHeight(root.left), auxHeight(root.right));	}
+		if (root == null)
+			return 0;
+		return 1 + Math.max(auxHeight(root.left), auxHeight(root.right));
+	}
 
 
 	public T min() {
@@ -124,19 +129,19 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	/////////////////////////////////////
 
 	public T max() {
-		return toList().get(toList().size()-1);
+		return toList().get(toList().size() - 1);
 	} //ta feto
 
 	/////////////////////////////////////
 
 	public boolean contains(T elem) {
 
-		List <T> listElems = toList();
-		for(int i = 0; i<size(); i++){
-			if(listElems.get(i).equals(elem))
+		List<T> listElems = toList();
+		for (int i = 0; i < size(); i++) {
+			if (listElems.get(i).equals(elem))
 				return true;
-			else{
-				if(listElems.get(i).compareTo(elem) > 0)
+			else {
+				if (listElems.get(i).compareTo(elem) > 0)
 					return false;
 			}
 		}
@@ -151,14 +156,13 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 		boolean found = false;
 
 		//se a arvore ja contiver o elemento ele nao insere
-		if(contains(elem))
+		if (contains(elem))
 			return;
 
 		//se a arvore estiver vazia ele coloca o elemento no data
-		if(isEmpty()){
+		if (isEmpty()) {
 			data = elem;
-		}
-		else {
+		} else {
 			//caso a raiz da arvore seja maior do que o elemento a ser inserido
 			if (data.compareTo(elem) > 0) {
 				aux = data;
@@ -179,37 +183,23 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 							index++;
 							//se tiver espaco livre mas nao der para colocar no inicio
 						else {
-								for (int i = 0; i < capacity; i++) {
-									if (children[index].children[i].data.compareTo(elem) > 0) {
-										if (children[index].children[i - 1].data == null) {
-											children[index].children[i - 1].data = elem;
-											break;
-										}
-										} else {
-											aux = children[index].children[i - 1].data;
-											children[index].children[i - 1].data = elem;
-											insert(aux);
-										}
+							for (int i = 0; i < capacity; i++) {
+								if (children[index].children[i].data.compareTo(elem) > 0) {
+									if (children[index].children[i - 1].data == null) {
+										children[index].children[i - 1].data = elem;
+										break;
 									}
+								} else {
+									aux = children[index].children[i - 1].data;
+									children[index].children[i - 1].data = elem;
+									insert(aux);
 								}
 							}
 						}
+					}
 				}
 			}
 		}
-		// TODO
-	}
-	private T findBiggerElem(int index,int childIndex, T elem){
-
-		while(index < capacity){
-			if(elem.compareTo(children[index].children[childIndex].data) < 0){
-				return children[index].data;
-			}
-			index++;
-		}
-
-		return null;
-
 	}
 
 	private List<Integer> freeSpaces(int index){
@@ -229,6 +219,27 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	/////////////////////////////////////
 
 	public void delete(T elem) {
+
+		int index = 0;
+
+		//se o elemento nao existir ele nao faz nada
+		if (!toList().contains(elem))
+			return;
+		else{
+			/*//se a raiz for o elemento que se pretende apagar
+			if(data == elem){
+				data = children[index].children[0].data;
+			}*/
+			while (index < children.length){
+				if(children[index].data == elem){
+					while(children[index].children[0] != null){
+						children[index].data = children[index].children[0].data;
+						index++;
+					}
+				}
+				index++;
+			}
+		}
 		// TODO
 	}
 
@@ -339,3 +350,5 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 		}
 	}
 }
+
+
