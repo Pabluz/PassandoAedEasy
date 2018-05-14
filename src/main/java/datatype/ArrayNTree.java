@@ -8,15 +8,14 @@ import java.util.*;
  *
  * @author numero 47871 Ricardo Cruz
  * @author numero 48597 Joao Costa
- * @author numero ----- ----------
  *
  */
 public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
-	private T prev, data, next;
+	private T  data;
 	private int size;
 	private int capacity;
-	private ArrayNTree<T>[] children;     // exemplo do array a usar
+	private ArrayNTree<T>[] children;     // exemplo do array a usar;
 
 	/**
 	 * Creates an empty tree
@@ -36,12 +35,12 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	 * @param elem     The element value
 	 * @param capacity The capacity of each node, ie, the maximum number of direct successors
 	 */
+	@SuppressWarnings("unchecked")
 	public ArrayNTree(T elem, int capacity) {
 		this.data = elem;
 		this.capacity = capacity;
-		this.children = new ArrayNTree[capacity];
+		this.children  = (ArrayNTree<T>[])Array.newInstance(ArrayNTree.class, capacity);
 		size++;
-		// TODO
 	}
 
 	/**
@@ -54,24 +53,7 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 		int count = 0;
 		T aux;
 		ArrayNTree<T> newArrayNTree;
-		while(count < list.size()){
-			if(count == 0)
-				newArrayNTree = new ArrayNTree<T>(list.get(0),capacity);
-			else {
-
-				//se o elemento na lista for menor que o data, entao tem de se trocar de posicao
-				if (list.get(count).compareTo(newArrayNTree.data) == 1) {
-					aux = newArrayNTree.data;
-					newArrayNTree.data = list.get(count);
-
-					for (int i = 0; i < newArrayNTree.children.length; i++) {
-						if (newArrayNTree.children[i] == null)
-							newArrayNTree.children[i].data = aux;
-						//incompleto
-					}
-				}
-				size++;
-			}
+		while(count < list.size()) {
 		}
 		// TODO
 	}
@@ -79,45 +61,108 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	/////////////////////////////////////
 
 	public boolean isEmpty() {
-		return data==null;
-	}
+		return data == null;
+	} //ta feto
 
 	/////////////////////////////////////
 
 	public boolean isLeaf() {
-		return false; //TODO
+		return data!=null && noChild(data); //TODO
 	}
 
+	private boolean noChild(T elem){
+		ArrayNTree<T> tree = findTree(elem);
+		if(tree == null){
+			return true;
+		}
+		return tree.isEmpty();
+	}
+
+
+
+	private ArrayNTree<T> findTree(T element){
+		int count = 0;
+
+		while(count < children.length){
+			if(children[count].data == element)
+				return children[count];
+			count++;
+		}
+
+		return null;
+	}
 	public int size() {
 		return size;
-	}
+	} // ta feto
 
 	/////////////////////////////////////
-
 	public int countLeaves() {
-		return -1;  // TODO
+		return countLeavesAux(children);
+		
+	//	return countLeavesAux(children);	\\\\\\\\\\\\
+	}
+	
+	
+	
+	public int countLeavesAux(ArrayNTree<T>[] child) {
+		int count=0;
+		for(int i=1; i<child.length; i++) {
+			for(int j=0; j<children[i].capacity; j++) {
+				
+				if(child[j].isLeaf()&&child[j]!=null) {
+					 count++;
+					return countLeavesAux(child);
+				}
+				else {
+					
+					return countLeavesAux(child);
+							
+				}
+			}
+		}
+		
+		return count;  
 
 	}
 
 	/////////////////////////////////////
 
-	public int height() {
-
-		return auxHeight(data);//TODO
+	
+	/**
+	 * The tree's height. An empty tree has height zero, a leaf has height one
+	 * @return the tree's height
+	 */
+	public int height() {//FIXME
+		if(children==null) 
+			return 0;
+	return auxAlt(children);
 
 	}
+	//+ .max(auxHeight(root.left), auxHeight(root.right));	}
 
-	private int auxHeight( T root) {
 
-		if(root==null)
-			return  0;
-		return 1+ Math.max(auxHeight(root.left), auxHeight(root.right));	}
-	//TODO
-	/////////////////////////////////////
+	private int auxAlt(ArrayNTree[] nTree) {
+		int conta=0;
+			for(int i=1; i<nTree.length; i++) {
+				for(int j=0;j<nTree[i].capacity; j++ ) {
 
-	public T min() {
-		return toList().get(0);
+				if(!nTree[j].isEmpty()&&!nTree[j].isLeaf()) {
+					
+					conta++;
+					auxAlt(nTree);
+				}
+				else  if(!nTree[j].isEmpty()&&nTree[j].isLeaf()) {
+						auxAlt(nTree);
+				
+				}
+			}
+		
+			}
+		return conta;
 	}
+
+
+	public T min() { return toList().get(0); } //ta feto
 
 	/////////////////////////////////////
 
@@ -129,12 +174,13 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
 		while(count < listElems.size()){
 
-			if(listElems.get(count).compareTo(max) == 1)
+			if(listElems.get(count).compareTo(max) > 0)
 				max = listElems.get(count);
 
 			count++;
 		}
-	}
+		return max;
+	} //ta feto
 
 	/////////////////////////////////////
 
@@ -145,16 +191,98 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 			if(listElems.get(i).equals(elem))
 				return true;
 			else{
-				if(listElems.get(i).compareTo(elem) == 1)
+				if(listElems.get(i).compareTo(elem) > 0)
 					return false;
 			}
 		}
-	}
+		return false;
+	}// ta feto
 
 	/////////////////////////////////////
 
-	public void insert(T elem) {
-		// TODO
+
+	/**
+	 * Insert element into tree keeping the invariant
+	 * If an element already exists, the tree does not change
+	 * @param elem the element to be inserted
+	 */
+		public void insert(T elem) {
+
+			T aux;
+			int index = 0;
+			boolean found = false;
+
+			//se a arvore ja contiver o elemento ele nao insere
+			if (contains(elem))
+				return;
+
+			//se a arvore estiver vazia ele coloca o elemento no data
+			if (isEmpty()) {
+				data = elem;
+			} else {
+				//caso a raiz da arvore seja maior do que o elemento a ser inserido
+				if (data.compareTo(elem) > 0) {
+					aux = data;
+					data = elem;
+					insert(aux);
+				} else {
+					while (index < children.length) {
+
+						List<Integer> espaco = freeSpaces(index);
+						//se nao ta cheio ele coloca no inicio
+						if (children[index].size() - 1 < capacity) {
+							if (espaco.size() == capacity) {
+								children[index].children[0].data = elem;
+								return;
+							}
+							//se nao tiver espaco livre passa para a proxima arvore
+							else if (espaco.size() == 0)
+								index++;
+								//se tiver espaco livre mas nao der para colocar no inicio
+							else {
+								for (int i = 0; i < capacity; i++) {
+									if (children[index].children[i].data.compareTo(elem) > 0) {
+										if (children[index].children[i - 1].data == null) {
+											children[index].children[i - 1].data = elem;
+											break;
+										}
+									} else {
+										aux = children[index].children[i - 1].data;
+										children[index].children[i - 1].data = elem;
+										insert(aux);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	private T findBiggerElem(int index,int childIndex, T elem){
+
+		while(index < capacity){
+			if(elem.compareTo(children[index].children[childIndex].data) < 0){
+				return children[index].data;
+			}
+			index++;
+		}
+
+		return null;
+
+	}
+
+	private List<Integer> freeSpaces(int index){
+
+		List<Integer> arrayIndex = new ArrayList<>();
+		int local = 0;
+		for(int i = 0; i< capacity; i++){
+			if(children[index].children[i].data == null) {
+				arrayIndex.add(index);
+				local++;
+			}
+		}
+
+		return arrayIndex;
 	}
 
 	/////////////////////////////////////
@@ -203,9 +331,9 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 		List<T> list = new ArrayList<T>();
 		Iterator<T> iterator = iterator();
 
-		while(iterator.hasNext()){
+		while(iterator.hasNext())
 			list.add(iterator.next());
-		}
+
 		return list;
 	}
 
@@ -216,9 +344,9 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 		//FIXME
 		List<T> list = toList();
 		ArrayNTree<T> clone = new ArrayNTree<T>(capacity);
-		for(int i = 0; i <list.size(); i++){
+		for(int i = 0; i <list.size(); i++)
 			clone.insert(list.get(i));
-		}
+
 		return clone;
 	}
 
