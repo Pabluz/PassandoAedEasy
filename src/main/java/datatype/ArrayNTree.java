@@ -226,18 +226,6 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 				}
 			}
 		}
-		private T findBiggerElem(int index,int childIndex, T elem){
-
-			while(index < capacity){
-				if(elem.compareTo(children[index].children[childIndex].data) < 0){
-					return children[index].data;
-				}
-				index++;
-			}
-
-			return null;
-
-		}
 
 		private List<Integer> freeSpaces(int index){
 
