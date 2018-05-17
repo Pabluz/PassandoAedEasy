@@ -345,27 +345,48 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
 		/////////////////////////////////////
 
-		@Override
-		public Iterator<T> iterator(){
-			return new IteratorNTree();
+	/**
+	 * Iterator for the ArrayNTree class
+	 * 
+	 *
+	 */
+	private class NTreeIterator implements Iterator<T> {
+
+		private Queue<ArrayNTree<T>> deque = new ConcurrentLinkedQueue<>();
+		
+		private NTreeIterator(ArrayNTree<T> root) {
+			queue(root);
+		}
+		
+		/**
+		 * 
+		 */
+		private void queue(ArrayNTree<T> elem) {
+			// adiciona
+			deque.add(elem);
+			for (int i = 0; i< children.length && !elem.children[i].isEmpty(); i++)
+			
+				queue(elem.children[i]);
+		}
+		
+		public boolean hasNext() {
+			// se o deque nao é nul, ent existe um proximo elem
+			return deque!=null;
 		}
 
-		//FIXME
-		private class IteratorNTree implements Iterator{
-			private int position = 0;
-
-			public boolean hasNext() {
-				return position < size() && data != null;
-
-			}
-
-			public T next() {
-				if (this.hasNext())
-					return children[position++].data;
-
-				return null;
-			}
+		
+		public T next() throws NoSuchElementException {
+			
+			if (hasNext()) 
+				
+				return deque.poll().data;
+				
+			// caso naão exista o next lança uma exception
+			throw new NoSuchElementException();
 		}
+		
 	}
+
+}
 
 
