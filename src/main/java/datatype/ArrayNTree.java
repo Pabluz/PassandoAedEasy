@@ -76,15 +76,27 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 	/////////////////////////////////////
 
 	public boolean isLeaf() {
-		return data!=null && auxLeaf(children); //TODO
+		return data!=null && noChild(data); //TODO
 	}
-	private boolean auxLeaf(ArrayNTree<T>[] child){
-		boolean verifica=false;
-		for(int i=0; i<child.length&&!verifica; i++) 
-			if(child[i]==null)
-				return true;
+	
+	private boolean noChild(T elem) {
+		ArrayNTree<T> tree = findTree(elem);
+		if (tree == null) {
+			return false;
+		}
+		return tree.isEmpty();
+	}
 
-		return false;
+	private ArrayNTree<T> findTree(T element) {
+		int count = 0;
+
+		while (count < children.length) {
+			if (children[count].data == element)
+				return children[count];
+			count++;
+		}
+
+		return null;
 	}
 	public int size() {
 		return size;
