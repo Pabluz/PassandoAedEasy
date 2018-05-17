@@ -345,6 +345,14 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
 		/////////////////////////////////////
 
+	
+	
+	
+	@Override
+	public Iterator<T> iterator() {
+		return new NTreeIterator(this);
+	}
+	
 	/**
 	 * Iterator for the ArrayNTree class
 	 * 
