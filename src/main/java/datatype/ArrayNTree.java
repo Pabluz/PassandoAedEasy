@@ -104,22 +104,29 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 
 	/////////////////////////////////////
 	public int countLeaves() {
-		
-		
-		
-		return capacity;
+		int count = 0;
+		if(isEmpty()) {
+			return 0;
+		}else{
+			return auxCountLeaves(this, count);
+		}
 
-
-		//	return countLeavesAux(children);	\\\\\\\\\\\\
 	}
+	
+	private int auxCountLeaves(ArrayNTree<T> arvore, int count ) {
+		
+		for(ArrayNTree tree: arvore.children){
 
+			if(tree!=null&&tree.isLeaf()) {
+				count++;
+			}
+			 if(!tree.isLeaf()) {
+				 auxCountLeaves(tree, count);
+			 }
+				 
 
-
-	public int countLeavesAux(ArrayNTree<T>[] child) {
-		return capacity;
-
-		/////////////////////////////////////
-
+		}
+		return count;
 	}
 		/**
 		 * The tree's height. An empty tree has height zero, a leaf has height one
@@ -127,17 +134,32 @@ public class ArrayNTree<T extends Comparable<T>> implements NTree<T> {
 		 */
 	public int height() {
 
-	    int altura = 0;
-	    for(ArrayNTree<T> tree:children) {
-	        //altura = auxHeight(tree);
-	    	if(tree != null) {
-	    		int currAlt = tree.height();
-	    		if(currAlt > altura) {
-	    			altura = currAlt;
-	    		}
-	    	}
-	    }
-	    return altura + 1;
+		int altura = 0;
+		for(ArrayNTree<T> tree:children) {
+			//altura = auxHeight(tree);
+			if(tree != null) {
+				altura++;
+				int currAlt = tree.auxHeight(0, altura);
+				if(currAlt > altura) {
+					altura = currAlt;
+				}
+			}
+		}
+		return altura + 1;
+	}
+
+	private int auxHeight(int currAlt, int altura) {
+		for(ArrayNTree<T> tree:children) {
+			//altura = auxHeight(tree);
+			if(tree != null) {
+				altura++;
+				currAlt = tree.auxHeight(currAlt, altura);
+				if(currAlt > altura) {
+					altura = currAlt;
+				}
+			}
+		}
+		return altura;
 	}
 
 	
